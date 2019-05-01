@@ -1,3 +1,4 @@
+
 class N_Generator extends Node
 {
   float generates = 1.0;

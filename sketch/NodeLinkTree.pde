@@ -20,7 +20,7 @@ class NodeTree {
     children = new ArrayList<NodeTree>();
     connections = new ArrayList<NodeLink>();
   }
-
+ 
   void addChildren(Node newNode)
   {
     for (int i = 0; i < children.size(); i++)

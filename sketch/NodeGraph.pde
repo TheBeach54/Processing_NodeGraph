@@ -4,6 +4,7 @@ class NodeGraph
   ArrayList<Node> listNodes;
   ArrayList<NodeLink> listLinks;
   ArrayList<NodeLink> linkQueue;
+  NodeMenu nodeMenu;
 
   int maxConnection = 1;
 
@@ -28,6 +29,7 @@ class NodeGraph
       listNodes.add(new N_Receiver(width - 100.0, height - 50 - i*50));
     }
 
+    nodeMenu = new NodeMenu();
     linkQueue = new ArrayList<NodeLink>();
     listLinks = new ArrayList<NodeLink>();
     pinTemp = null;
@@ -56,6 +58,24 @@ class NodeGraph
     listNodes.add(new N_Merger(mouseX, mouseY, floor(random(2, 5))));
   }
 
+  void createNode(String name)
+  {
+    switch(name)
+    {
+      case "N_Generator" :
+      createGenerator();
+      break;
+      case "N_Receiver" : 
+      createReceiver();
+      break;
+      case "N_Divider" : 
+      createDivider();
+      break;
+      case "N_Merger" : 
+      createMerger();
+      break;
+    }
+  }
   //-----------------
   // Common Function
   void update()
@@ -81,28 +101,44 @@ class NodeGraph
       fill(100, 100, 100, 100);
       rect(mouseX, mouseY, dragStartX-mouseX, dragStartY-mouseY);
     }
+    nodeMenu.show();
   }
 
   void pressed()
   {
-    boolean found = false;
-    for (int i = listNodes.size()-1; i>=0; i--)
+    if (mouseButton == LEFT)
     {
-      found = listNodes.get(i).mouseIsOverlapping();
-      if (found)
+      
+      boolean found = false;
+      for (int i = listNodes.size()-1; i>=0; i--)
       {
-        listNodes.get(i).pressed();
-        Node temp = listNodes.get(i);
-        listNodes.remove(i);
-        listNodes.add(temp);        
-        break;
+        found = listNodes.get(i).mouseIsOverlapping();
+        if (found)
+        {
+          listNodes.get(i).pressed();
+          Node temp = listNodes.get(i);
+          listNodes.remove(i);
+          listNodes.add(temp);        
+          break;
+        }
       }
-    }
-    if (!found)
+
+
+      if (!found)
+      {
+
+        isDragged = true;
+        dragStartX = mouseX;
+        dragStartY = mouseY;
+      }
+
+      if (!nodeMenu.mouseIsOverlapping())
+      {
+        nodeMenu.close();
+      }
+    } else if (mouseButton == RIGHT)
     {
-      isDragged = true;
-      dragStartX = mouseX;
-      dragStartY = mouseY;
+      nodeMenu.open(mouseX, mouseY);
     }
   }
   void released()
@@ -117,7 +153,10 @@ class NodeGraph
       {
         n.isSelected = n.overlapRect(mouseX, mouseY, dragStartX-mouseX, dragStartY-mouseY);
       }
-    }
+    } 
+
+
+
     isDragged = false;
   }
   void keyPressed(char key)

@@ -2,6 +2,8 @@ color C_NODE_DEFAULT = color(150,150,150);
 color C_NODE_FED = color(161,211,53);
 color C_NODE_UNFED = color(211,88,53);
 
+color C_NODE_WIDGET = color(120,120,120);
+
 color C_PIN_WATER = color(112,143,227);
 color C_PIN_DEFAULT = color(150);
 color C_PIN_CLICKED = color(250);

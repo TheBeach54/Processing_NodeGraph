@@ -1,6 +1,7 @@
-ArrayList<NodeTree> treeRoots; //<>// //<>// //<>//
+ArrayList<NodeTree> treeRoots; //<>// //<>// //<>// //<>//
 
-NodeGraph nodeGraph; //<>// //<>// //<>//
+
+NodeGraph nodeGraph; //<>// //<>//
 float flowRate;
 void setup()
 {
@@ -10,9 +11,7 @@ void setup()
 }
 void mousePressed()
 {
-  if (mouseButton==LEFT)
-    nodeGraph.pressed();
-
+  nodeGraph.pressed();
 }
 void mouseReleased()
 {
