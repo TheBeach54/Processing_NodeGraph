@@ -5,13 +5,17 @@ class NodePin {
   boolean isHover;
   boolean isInput;
 
+  boolean isBlocked = false;
+
   float locX, locY;
+  float x, y;
 
   float xSize = 10;
   float ySize = 10;
 
   int connection;
   int executed;
+
 
   Node parent;
   NodeLink connectedLink;
@@ -42,6 +46,13 @@ class NodePin {
 
   void update() {
     executed = 0;
+    x = parent.x + locX;
+    y = parent.y + locY;
+  }
+
+  void updateLink() {
+    if (connection > 0)
+      connectedLink.update();
   }
 
   void drop()
@@ -77,10 +88,13 @@ class NodePin {
     fill(executed>0?C_PIN_WATER:C_PIN_DEFAULT);
     if (isDragged)
       fill(C_PIN_CLICKED);
-    rect(parent.x + locX, parent.y + locY, xSize, ySize);
+
+
+    rect(x, y, xSize, ySize);
     if (isDragged) {
       PVector cPos = getCenter();
-      stroke(C_LINK_DEFAULT);
+      boolean valid = nodeGraph.validateLink(cPos.x, cPos.y, mouseX, mouseY);
+      stroke(valid?C_LINK_FULL:C_LINK_DEFAULT);
       strokeWeight(2);
       line(cPos.x, cPos.y, mouseX, mouseY);
     }

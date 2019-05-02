@@ -1,12 +1,28 @@
-class NodeMenu 
+static abstract class NodeType
 {
-  float x, y;
-  float xSize, ySize;
-  String[] strings = {"N_Generator", "N_Receiver", "N_Divider", "N_Merger"};
+  static final int GENERATOR = 0;
+  static final int RECEIVER = 1;
+  static final int DIVIDER = 2;
+  static final int MERGER = 3;
+  static final int PASSER = 4;
+  static final int SWITCH = 5;
+}
+
+class NodeMenu extends Widget
+{
+  String[] strings = 
+    {
+    "Generator", 
+    "Receiver", 
+    "Divider", 
+    "Merger", 
+    "Passer", 
+    "Switch"
+  };
   ArrayList<NodeMenuWidget> menuWidgets;
   float widgetHeight = 20;
 
-  boolean open = false;
+  boolean isOpen = false;
   NodeMenu()
   {
     x = 0;
@@ -24,17 +40,51 @@ class NodeMenu
   {
     this.x = x;
     this.y = y;
-    open = true;
+    isOpen = true;
+    for (NodeMenuWidget w : menuWidgets)
+    {
+      w.update();
+    }
+  }
+  void pressed()
+  {
+    for (NodeMenuWidget w : menuWidgets)
+    {
+      if (w.mouseIsOverlapping())
+      {
+        w.isHeld = true;
+      }
+    }
+  }
+
+  void released()
+  {
+    for (NodeMenuWidget w : menuWidgets)
+    {
+      w.isHeld = false;
+    }
+  }
+
+  void drop()
+  {
+    for (NodeMenuWidget w : menuWidgets)
+    {
+      if (w.mouseIsOverlapping() && w.isHeld == true && isOpen)
+      {
+        w.clicked();
+      }
+      w.isHeld = false;
+    }
   }
 
   void close()
   {
-    open = false;
+    isOpen = false;
   }  
 
   void show()
   {
-    if (open) {
+    if (isOpen) {
       strokeWeight(1);
       fill(C_NODE_DEFAULT);
       rect(x, y, xSize, ySize);
@@ -45,19 +95,15 @@ class NodeMenu
       }
     }
   }
-
-  boolean mouseIsOverlapping()
-  {
-    return (mouseX > this.x && mouseX < (this.x + xSize) && mouseY > this.y && mouseY < this.y + this.ySize);
-  }
 }
 
-class NodeMenuWidget
+class NodeMenuWidget extends Widget
 {
   NodeMenu parent;
   String name;
   int index;
   float border = 2;
+  boolean isHeld;
 
   NodeMenuWidget(NodeMenu parent, String name, int index)
   {
@@ -68,20 +114,25 @@ class NodeMenuWidget
 
   void clicked()
   {
-    nodeGraph.createNode(name);
+    nodeGraph.createNode(index);
+    parent.close();
   }
-  
+
   void update()
   {
-    
+    x = border + parent.x;
+    y = border + parent.y + index * parent.widgetHeight;
+    xSize = parent.xSize - border * 2;
+    ySize = parent.widgetHeight - border * 2;
   }
 
   void show()
   {
-     
-    rect(border + parent.x, 
-      border + parent.y+index*parent.widgetHeight, 
-      parent.xSize - border * 2, 
-      parent.widgetHeight - border * 2);
+    strokeWeight(1);
+    stroke(250);
+    fill(isHeld?C_WIDGET_DEFAULT:C_WIDGET_HELD);
+    rect(x, y, xSize, ySize);
+    fill(C_LINK_TEXT);
+    text(name, x + xSize/2, y + ySize/2 + border * 2);
   }
 }

@@ -3,7 +3,7 @@ class NodeLink {
   NodePin out;
 
   float lastValue;
-
+  boolean isValid;
 
   NodeLink(NodePin in, NodePin out)
   {
@@ -14,6 +14,8 @@ class NodeLink {
     out.connectedLink = this;
     in.connection++;
     out.connection++;
+    
+    update();
   }
   void chainExecute()
   {
@@ -29,12 +31,20 @@ class NodeLink {
     }
   }
 
+  void update(){
+    isValid = nodeGraph.validateLink(in.x, in.y, out.x, out.y);
+  }
 
 
   void execute() {
-
-    lastValue = in.parent.absorbValue(flowRate);
-    out.parent.injectValue(lastValue);
+    
+    if (!(in.isBlocked || out.isBlocked) && isValid) {
+      lastValue = in.parent.absorbValue(flowRate);
+      out.parent.injectValue(lastValue);
+    } else
+    {
+      lastValue = 0;
+    }
     in.executed++;
     out.executed++;
   }

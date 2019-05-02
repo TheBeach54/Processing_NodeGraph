@@ -110,3 +110,95 @@ class N_Merger extends Node
   {
   }
 }
+
+class N_Passer extends Node
+{
+  N_Passer (float x, float y) {
+    super(x, y);
+    createPin(1, 1);
+  }
+  N_Passer copy()
+  {
+    if (parent == null) {
+      N_Passer copy = new N_Passer(x+10, y+10);
+      copy.value = value;
+      return copy;
+    } else {
+      return null;
+    }
+  }
+
+  void update() {
+
+    if (inputs[0].connection > 0)
+    {
+      isFed = inputs[0].connectedLink.lastValue > DELTAFLOAT;
+    } else
+    {
+      isFed = false;
+    }
+    value = min(value, 1.0);
+    super.update();
+  }
+
+  void preShow()
+  {
+    value = min(value, 1.0);
+    fill(isFed?C_NODE_FED:C_NODE_UNFED);
+  }
+}
+
+class N_Switch extends Node
+{
+  boolean state;
+
+
+  N_Switch(float x, float y, Node child) {
+    super(x, y);
+    createPin(1, 2);
+
+    this.child = child;
+    child.assignParent(this);
+  }
+
+  N_Switch copy() {
+    nodeGraph.createPasser();
+    N_Switch copy = new N_Switch(x+10, y+10, nodeGraph.getLastNode());
+    copy.value = value;
+    return copy;
+  }
+
+  void destroy() {
+
+    super.destroy();
+  }
+
+
+  void update() {
+
+    if (isDragged)
+    {
+      child.x = x;
+      child.y = y - 40;
+    } else
+    {
+      x = child.x;
+      y = child.y+40;
+    }
+    if (isSelected)
+      child.isSelected = true;
+
+    if (child.isSelected)
+      isSelected = true;
+
+    state = child.isFed;
+    outputs[0].isBlocked = state;
+    outputs[1].isBlocked = !state;
+    super.update();
+  }
+
+  void preShow()
+  {
+    fill(state?C_NODE_FED:C_NODE_UNFED);
+  }
+}

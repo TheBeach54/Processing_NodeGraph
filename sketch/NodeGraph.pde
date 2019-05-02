@@ -4,6 +4,7 @@ class NodeGraph
   ArrayList<Node> listNodes;
   ArrayList<NodeLink> listLinks;
   ArrayList<NodeLink> linkQueue;
+  ArrayList<Blocker> blockers;
   NodeMenu nodeMenu;
 
   int maxConnection = 1;
@@ -28,6 +29,11 @@ class NodeGraph
     for (int i = 0; i < 8; i++) {
       listNodes.add(new N_Receiver(width - 100.0, height - 50 - i*50));
     }
+
+    blockers = new ArrayList<Blocker>();
+
+    blockers.add(new Blocker(width/2, 0, 40, height/2-20));
+    blockers.add(new Blocker(width/2, height/2+20, 40, height/2-20));
 
     nodeMenu = new NodeMenu();
     linkQueue = new ArrayList<NodeLink>();
@@ -58,106 +64,45 @@ class NodeGraph
     listNodes.add(new N_Merger(mouseX, mouseY, floor(random(2, 5))));
   }
 
-  void createNode(String name)
+  N_Passer createPasser()
   {
-    switch(name)
+    N_Passer n = new N_Passer(mouseX, mouseY);
+    listNodes.add(n);
+    return n;
+  }
+  Node getLastNode()
+  {
+    return listNodes.get(listNodes.size()-1);
+  }
+  void createSwitch()
+  {
+    createPasser();
+    listNodes.add(new N_Switch(mouseX, mouseY+40,getLastNode()));
+  }
+
+  void createNode(int index)
+  {
+    switch(index)
     {
-      case "N_Generator" :
+    case NodeType.GENERATOR:
       createGenerator();
       break;
-      case "N_Receiver" : 
+    case NodeType.RECEIVER: 
       createReceiver();
       break;
-      case "N_Divider" : 
+    case NodeType.DIVIDER: 
       createDivider();
       break;
-      case "N_Merger" : 
+    case NodeType.MERGER: 
       createMerger();
       break;
+    case NodeType.PASSER: 
+      createPasser();
+      break;
+    case NodeType.SWITCH: 
+      createSwitch();
+      break;
     }
-  }
-  //-----------------
-  // Common Function
-  void update()
-  {
-    appendLinkQueue();
-
-    for (Node n : listNodes)
-      n.update();
-
-    for (NodeLink nl : listLinks)
-      nl.execute();
-  }
-
-  void show()
-  {
-    for (Node n : listNodes)
-      n.show();
-
-    for (NodeLink nl : listLinks)
-      nl.show();
-
-    if (isDragged) {
-      fill(100, 100, 100, 100);
-      rect(mouseX, mouseY, dragStartX-mouseX, dragStartY-mouseY);
-    }
-    nodeMenu.show();
-  }
-
-  void pressed()
-  {
-    if (mouseButton == LEFT)
-    {
-      
-      boolean found = false;
-      for (int i = listNodes.size()-1; i>=0; i--)
-      {
-        found = listNodes.get(i).mouseIsOverlapping();
-        if (found)
-        {
-          listNodes.get(i).pressed();
-          Node temp = listNodes.get(i);
-          listNodes.remove(i);
-          listNodes.add(temp);        
-          break;
-        }
-      }
-
-
-      if (!found)
-      {
-
-        isDragged = true;
-        dragStartX = mouseX;
-        dragStartY = mouseY;
-      }
-
-      if (!nodeMenu.mouseIsOverlapping())
-      {
-        nodeMenu.close();
-      }
-    } else if (mouseButton == RIGHT)
-    {
-      nodeMenu.open(mouseX, mouseY);
-    }
-  }
-  void released()
-  {
-
-    for (Node n : listNodes)
-      n.released();
-
-    if (isDragged)
-    {
-      for (Node n : listNodes)
-      {
-        n.isSelected = n.overlapRect(mouseX, mouseY, dragStartX-mouseX, dragStartY-mouseY);
-      }
-    } 
-
-
-
-    isDragged = false;
   }
   void keyPressed(char key)
   {
@@ -185,6 +130,120 @@ class NodeGraph
       break;
     }
   }
+
+  boolean validateLink(float ax, float ay, float bx, float by)
+  {
+    for (Blocker b : blockers)
+    {
+      if (b.intersectLine(ax, ay, bx, by))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+  //-----------------
+  // Common Function
+  void update()
+  {
+    appendLinkQueue();
+
+
+    for (Node n : listNodes)
+      n.preUpdate();
+
+    for (Node n : listNodes)
+      n.update();
+
+    for (NodeLink nl : listLinks)
+      nl.execute();
+  }
+
+  void show()
+  {
+    for (Blocker b : blockers)
+      b.show();
+
+    for (Node n : listNodes)
+      n.show();
+
+    for (NodeLink nl : listLinks)
+      nl.show();
+
+
+
+    if (isDragged) {
+      fill(100, 100, 100, 100);
+      rect(mouseX, mouseY, dragStartX-mouseX, dragStartY-mouseY);
+    }
+    nodeMenu.show();
+  }
+
+  void pressed()
+  {
+    if (mouseButton == LEFT)
+    {
+
+      boolean found = false;
+      for (int i = listNodes.size()-1; i>=0; i--)
+      {
+        found = listNodes.get(i).mouseIsOverlapping();
+        if (found)
+        {
+          listNodes.get(i).pressed();
+          Node temp = listNodes.get(i);
+          listNodes.remove(i);
+          listNodes.add(temp);        
+          break;
+        }
+      }
+      if (nodeMenu.mouseIsOverlapping())
+      {
+        found = true;
+        nodeMenu.pressed();
+      } else
+      {
+        nodeMenu.close();
+      }
+
+
+      if (!found)
+      {
+
+        isDragged = true;
+        dragStartX = mouseX;
+        dragStartY = mouseY;
+      }
+    } else if (mouseButton == RIGHT)
+    {
+      nodeMenu.open(mouseX, mouseY);
+    }
+  }
+  void released()
+  {
+
+    for (Node n : listNodes)
+      n.released();
+
+    if (isDragged)
+    {
+      for (Node n : listNodes)
+      {
+        n.isSelected = n.overlapRect(mouseX, mouseY, dragStartX-mouseX, dragStartY-mouseY);
+      }
+    } 
+
+    if (nodeMenu.mouseIsOverlapping())
+    {
+      nodeMenu.drop();
+    } else
+    {
+      nodeMenu.released();
+    }
+
+    isDragged = false;
+  }
+
   //---------------------------------------
   //Node NodePin NodeLink wrapper functions
 
@@ -248,10 +307,28 @@ class NodeGraph
   {
     for (int i = 0; i< n.size(); i++)
     {
-      destroyLinks(n.get(i).getLinks());
-      listNodes.remove(n.get(i));
+      destroyNode(n.get(i));
     }
   }
+
+  void destroyNode(Node n)
+  {
+    if (n != null) {
+      n.destroy();
+      destroyLinks(n.getLinks());
+      listNodes.remove(n);
+    }
+  }
+
+  void destroyLink(NodeLink nl)
+  {
+    if (listLinks.contains(nl))
+    {
+      nl.destroy();
+      listLinks.remove(nl);
+    }
+  }
+
 
   void destroyLinks(ArrayList<NodeLink> nls)
   {
