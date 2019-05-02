@@ -46,6 +46,10 @@ class NodePin {
 
   void update() {
     executed = 0;
+  }
+
+  void updatePos()
+  {
     x = parent.x + locX;
     y = parent.y + locY;
   }
@@ -81,8 +85,13 @@ class NodePin {
     }
     isDragged = false;
   }
+  void preShow()
+  {
+    updatePos();
+  }
   void show()
   {
+
     strokeWeight(1);
     stroke(C_PIN_STROKE);
     fill(executed>0?C_PIN_WATER:C_PIN_DEFAULT);

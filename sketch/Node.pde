@@ -47,7 +47,6 @@ class Widget
       tmax = temp;
     }
 
-
     float tymin = (min.y - startY) / dir.y; 
     float tymax = (max.y - startY) / dir.y; 
 
@@ -72,42 +71,8 @@ class Widget
     if (tmax < 0 && tmin < 0)
       return false;
 
-    //float tzmin = (min.z - r.orig.z) / r.dir.z; 
-    //float tzmax = (max.z - r.orig.z) / r.dir.z; 
-
-    //if (tzmin > tzmax) swap(tzmin, tzmax); 
-
-    //if ((tmin > tzmax) || (tzmin > tmax)) 
-    //  return false; 
-
-    //if (tzmin > tmin) 
-    //  tmin = tzmin; 
-
-    //if (tzmax < tmax) 
-    //  tmax = tzmax; 
-
     return true;
   } 
-
-  //boolean intersectLine(float ax, float ay, float bx, float by)
-  //{
-  //  PVector start = new PVector(ax, ay);
-  //  PVector end = new PVector(bx, by);
-  //  PVector ray = end.sub(start);
-  //  PVector perp = new PVector(end.y - start.y, start.x - end.x);
-
-  //  PVector[] point = {new PVector(x, y), new PVector(x+xSize, y), new PVector(x+xSize, y+ySize), new PVector(x, y+ySize)};
-  //  PVector toPoint = new PVector(point[0].x - start.x, point[0].y - start.y);
-  //  float test = PVector.dot(perp, toPoint);
-  //  for (int i = 1; i<4; i++)
-  //  {
-  //    toPoint = new PVector(point[i].x - start.x, point[i].y - start.y);
-  //    if ((test<=0)!= (PVector.dot(perp, toPoint)<=0))
-  //      return true;
-  //  }
-
-  //  return false;
-  //}
 
   boolean overlapRect(float rectX, float rectY, float rectSizeX, float rectSizeY)
   {
@@ -129,19 +94,18 @@ class Widget
 class Node extends Widget
 {
   // Node Helpers
-  float mOffX, mOffY;
-
+  private float mOffX, mOffY;
   boolean isSelected;
 
-  float oldValue;
-  boolean isFed = false;
-
+  // Node Family
   Node parent;
   Node child;
 
-  boolean isDestroyed = false;
   // Node Values
   float value;
+  boolean isDestroyed = false;
+  float oldValue;
+  boolean isFed = false;
 
   // Node Pins
   NodePinOutput[] outputs;
@@ -160,11 +124,8 @@ class Node extends Widget
 
   void initialize()
   {
-
     this.mOffX = 0;
     this.mOffY = 0;
-
-
     this.value = 0;
   }
 
@@ -205,6 +166,9 @@ class Node extends Widget
     return factored;
   }
 
+  void injectValue(float v) {
+    value += v;
+  }
 
   boolean pressed()
   {
@@ -235,8 +199,6 @@ class Node extends Widget
 
   void released()
   {
-
-
     if ( mouseIsOverlapping() )
     {
       for (NodePin pin : outputs) {
@@ -270,27 +232,31 @@ class Node extends Widget
   {    
     if (isDragged)
     {
-      for (NodePin pin : outputs) 
-        pin.updateLink();
+      refreshLinks();
+      if (child != null)
+        child.refreshLinks();
+      if (parent != null)
+        parent.refreshLinks();
 
-      for (NodePin pin : inputs)
-        pin.updateLink();
-        
       x = mouseX - mOffX;
       y = mouseY - mOffY;
     }
   }
+  void refreshLinks() {
+    for (NodePin pin : outputs) 
+      pin.updateLink();
+
+    for (NodePin pin : inputs)
+      pin.updateLink();
+  }
   void update()
   {
-
     for (NodePin np : inputs)
       np.update();
 
     for (NodePin np : outputs)
       np.update();
   }
-
-
 
   ArrayList<NodeLink> getLinks()
   {
@@ -310,12 +276,17 @@ class Node extends Widget
 
   void preShow()
   {
+    for(NodePin np : outputs)
+      np.preShow();
+      
+    for(NodePin np : inputs)
+      np.preShow();
   }
 
   void show()
   {
-    strokeWeight(isSelected?4:1);
-    stroke(200);
+    strokeWeight(isSelected?2:1);
+    stroke(C_NODE_STROKE);
     fill(C_NODE_DEFAULT);
     preShow();
     rectMode(CORNER);
@@ -327,7 +298,7 @@ class Node extends Widget
       inputs[i].show();
     }
     textAlign(CENTER);
-    fill(255);
+    fill(C_LINK_TEXT);
     text(value, x + xSize/2, y + 20);
   }
 
@@ -344,9 +315,5 @@ class Node extends Widget
     if (parent != null)
       if (!parent.isDestroyed)
         nodeGraph.destroyNode(parent);
-  }
-
-  void injectValue(float v) {
-    value += v;
   }
 }

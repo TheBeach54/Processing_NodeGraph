@@ -25,7 +25,7 @@ void keyPressed()
 
 void draw()
 {
-  background(51);
+  background(C_BACKGROUND);
   nodeGraph.update();
   nodeGraph.show();
 }

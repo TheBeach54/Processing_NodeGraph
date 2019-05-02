@@ -7,4 +7,11 @@ class Blocker extends Widget
     this.xSize = xSize;
     this.ySize = ySize;
   }
+  
+  void show()
+  {
+    noStroke();
+    fill(C_BLOCKER_FILL);
+    rect(x,y,xSize,ySize);
+  }
 }

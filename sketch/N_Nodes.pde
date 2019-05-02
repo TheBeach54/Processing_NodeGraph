@@ -30,6 +30,7 @@ class N_Generator extends Node
   }
 
   void preShow() {
+    super.preShow();
     fill(isFed?C_NODE_FED:C_NODE_UNFED);
   }
 }
@@ -62,6 +63,7 @@ class N_Receiver extends Node
   }
 
   void preShow() {
+    super.preShow();
     fill(isFed?C_NODE_FED:C_NODE_UNFED);
   }
 }
@@ -108,6 +110,7 @@ class N_Merger extends Node
 
   void preShow()
   {
+    super.preShow();
   }
 }
 
@@ -143,6 +146,7 @@ class N_Passer extends Node
 
   void preShow()
   {
+    super.preShow();
     value = min(value, 1.0);
     fill(isFed?C_NODE_FED:C_NODE_UNFED);
   }
@@ -199,6 +203,7 @@ class N_Switch extends Node
 
   void preShow()
   {
+    super.preShow();
     fill(state?C_NODE_FED:C_NODE_UNFED);
   }
 }

@@ -85,8 +85,9 @@ class NodeMenu extends Widget
   void show()
   {
     if (isOpen) {
+      stroke(C_WIDGET_STROKE);
       strokeWeight(1);
-      fill(C_NODE_DEFAULT);
+      fill(C_WIDGET_BACKGROUND);
       rect(x, y, xSize, ySize);
 
       for (NodeMenuWidget w : menuWidgets)
@@ -129,10 +130,10 @@ class NodeMenuWidget extends Widget
   void show()
   {
     strokeWeight(1);
-    stroke(250);
-    fill(isHeld?C_WIDGET_DEFAULT:C_WIDGET_HELD);
+    stroke(C_WIDGET_STROKE);
+    fill(isHeld?C_WIDGET_HELD:C_WIDGET_DEFAULT);
     rect(x, y, xSize, ySize);
-    fill(C_LINK_TEXT);
+    fill(C_WIDGET_TEXT);
     text(name, x + xSize/2, y + ySize/2 + border * 2);
   }
 }
