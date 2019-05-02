@@ -94,7 +94,7 @@ class NodePin {
     if (isDragged) {
       PVector cPos = getCenter();
       boolean valid = nodeGraph.validateLink(cPos.x, cPos.y, mouseX, mouseY);
-      stroke(valid?C_LINK_FULL:C_LINK_DEFAULT);
+      stroke(valid?C_LINK_DEFAULT:C_LINK_INVALID);
       strokeWeight(2);
       line(cPos.x, cPos.y, mouseX, mouseY);
     }

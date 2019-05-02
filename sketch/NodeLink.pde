@@ -62,6 +62,9 @@ class NodeLink {
     PVector start = in.getCenter();
     PVector end = out.getCenter();
     stroke(lastValue>0?C_LINK_FULL:C_LINK_DEFAULT);
+    if(!isValid)
+      stroke(C_LINK_INVALID);
+      
     strokeWeight(2);
     line(start.x, start.y, end.x, end.y);
     textAlign(CENTER);

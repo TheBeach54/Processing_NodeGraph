@@ -11,6 +11,7 @@ color C_PIN_STROKE = color(250);
 
 color C_LINK_FULL = color(112,143,227);
 color C_LINK_DEFAULT = color(200);
+color C_LINK_INVALID = color(211,88,53);
 color C_LINK_TEXT = color(250);
 
 color C_WIDGET_DEFAULT = C_NODE_DEFAULT;
