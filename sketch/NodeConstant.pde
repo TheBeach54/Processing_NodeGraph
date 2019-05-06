@@ -7,6 +7,7 @@ color C_BLOCKER_FILL = color(200, 39, 31);
 
 color C_PIN_WATER = color(112, 143, 227);
 color C_PIN_ELECTRIC = color(255, 236, 85);
+color C_PIN_TEMPLATE = color(80,80,80,128);
 color C_PIN_DEFAULT = color(150);
 color C_PIN_CLICKED = color(250);
 color C_PIN_STROKE = color(100);

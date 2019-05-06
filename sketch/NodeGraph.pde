@@ -58,7 +58,7 @@ class NodeGraph
   }
   void createDivider()
   {
-    listNodes.add(new N_Divider(mouseX, mouseY, floor(random(2, 5))));
+    listNodes.add(new N_Divider(mouseX, mouseY));
   }
   void createPowerReceiver()
   {    
@@ -66,7 +66,7 @@ class NodeGraph
   }
   void createMerger()
   {
-    listNodes.add(new N_Merger(mouseX, mouseY, floor(random(2, 5))));
+    listNodes.add(new N_Merger(mouseX, mouseY));
   }
   void createWaterMill()
   {
@@ -195,8 +195,8 @@ class NodeGraph
     {
       if (n instanceof N_Generator)
       {
-        if (n.outputs[0].connectedLink != null)
-          n.outputs[0].connectedLink.chainExecute();
+        if (n.outputs.get(0).connectedLink != null)
+          n.outputs.get(0).connectedLink.chainExecute();
       }
     }
   }
@@ -294,8 +294,8 @@ class NodeGraph
       && a != b 
       && a.isInput != b.isInput 
       && a.parent != b.parent
-      && b.connection < 1
-      && a.connection < 1
+      && b.connection == 0
+      && a.connection == 0
       &&(( a.valueType == b.valueType)
       ||(a.valueType == -1)
       ||(b.valueType == -1)));
@@ -312,10 +312,11 @@ class NodeGraph
     if (connectionIsValid(pinTemp, b))
       addLink(pinTemp, b);
   }
+  
 
   void addLink(NodePin a, NodePin b)
-  {
-    linkQueue.add(new NodeLink(a, b));
+  {       
+    linkQueue.add(new NodeLink(a.parent.replaceTemplate(a), b.parent.replaceTemplate(b)));
   }
 
   void conformAllLinks()

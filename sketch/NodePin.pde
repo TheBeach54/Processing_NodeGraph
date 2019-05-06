@@ -4,6 +4,7 @@ class NodePin {
   float pinSize;
   boolean isHover;
   boolean isInput;
+  boolean isTemplate;
 
   boolean isBlocked = false;
 
@@ -56,11 +57,11 @@ class NodePin {
     x = parent.x + locX;
     y = parent.y + locY;
   }
-  
+
   void updateType()
   {
     valueType = parent.valueType;
-    if(connectedLink != null)
+    if (connectedLink != null)
       connectedLink.assignType(valueType);
   }
 
@@ -105,15 +106,20 @@ class NodePin {
     strokeWeight(1);
     stroke(C_PIN_STROKE);
     //fill(executed>0?C_PIN_WATER:C_PIN_DEFAULT);
+
     if (valueType == ValueType.WATER)
       fill(C_PIN_WATER);
     if (valueType == ValueType.ELECTRIC)
       fill(C_PIN_ELECTRIC);
-          if (valueType == ValueType.ELECTRIC)
-      fill(C_PIN_ELECTRIC);
-      
+    if (valueType == ValueType.UNDEFINED)
+      fill(C_PIN_DEFAULT);
+    if (this instanceof NodePinInputTemplate || this instanceof NodePinOutputTemplate)
+      fill(C_PIN_TEMPLATE);
+
     if (isDragged)
       fill(C_PIN_CLICKED);
+
+
 
     rect(x, y, xSize, ySize);
     if (isDragged) {
@@ -140,4 +146,20 @@ class NodePinOutput extends NodePin {
     super(parent, locX, locY);
     this.isInput = false;
   }
+}
+class NodePinInputTemplate extends NodePinInput {
+  NodePinInputTemplate(Node parent, float locX, float locY)
+  {
+    super(parent, locX, locY);
+    isTemplate = true;
+  }
+
+}
+class NodePinOutputTemplate extends NodePinOutput {
+  NodePinOutputTemplate(Node parent, float locX, float locY)
+  {
+    super(parent, locX, locY);
+    isTemplate = true;
+  }
+
 }

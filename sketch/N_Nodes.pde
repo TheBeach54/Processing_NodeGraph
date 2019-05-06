@@ -15,7 +15,6 @@ class N_Generator extends Node
   N_Generator copy()
   {
     N_Generator copy = new N_Generator(x+10, y+10);
-    copy.value = value;
     return copy;
   }
 
@@ -65,7 +64,6 @@ class N_PowerReceiver extends N_Receiver
   N_PowerReceiver copy()
   {
     N_PowerReceiver copy = new N_PowerReceiver(x+10, y+10);
-    copy.value = value;
     return copy;
   }
 }
@@ -85,7 +83,6 @@ class N_Receiver extends Node
   N_Receiver copy()
   {
     N_Receiver copy = new N_Receiver(x+10, y+10);
-    copy.value = value;
     return copy;
   }
   void update() {
@@ -110,20 +107,21 @@ class N_Divider extends Node
     super(x, y);
     this.outCount = outCount;
     valueType = -1;
+    outputExtensible = true;
     createPin(1, outCount);
   }
 
   N_Divider(float x, float y ) {
     super(x, y);
-    this.outCount = 2;
+    this.outCount = 1;
     valueType = -1;
-    createPin(1, 2);
+    outputExtensible = true;
+    createPin(1, 1);
   }
 
   N_Divider copy()
   {
     N_Divider copy = new N_Divider(x+10, y+10, outCount);
-    copy.value = value;
     return copy;
   }
 }
@@ -136,19 +134,22 @@ class N_Merger extends Node
     super(x, y);
     this.inCount = inCount;
     valueType = -1;
+    inputExtensible = true;
+    createPin(inCount, 1);
+  }
+  N_Merger(float x, float y)
+  {
+    super(x, y);
+    this.inCount = 1;
+    valueType = -1;
+    inputExtensible = true;
     createPin(inCount, 1);
   }
 
   N_Merger copy()
   {
     N_Merger copy = new N_Merger(x+10, y+10, inCount);
-    copy.value = value;
     return copy;
-  }
-
-  void preShow()
-  {
-    super.preShow();
   }
 }
 
@@ -161,20 +162,21 @@ class N_Passer extends Node
   }
   N_Passer copy()
   {
-    if (parent == null) {
-      N_Passer copy = new N_Passer(x+10, y+10);
-      copy.value = value;
+    if (parent == null) 
+    { 
+      N_Passer copy = new N_Passer(x+10, y+10); 
       return copy;
-    } else {
+    } else 
+    { 
       return null;
     }
   }
 
   void update() {
 
-    if (inputs[0].connection > 0)
+    if (inputs.get(0).connection > 0)
     {
-      isFed = inputs[0].connectedLink.lastValue > DELTAFLOAT;
+      isFed = inputs.get(0).connectedLink.lastValue > DELTAFLOAT;
     } else
     {
       isFed = false;
@@ -208,7 +210,6 @@ class N_Switch extends Node
   N_Switch copy() {
     nodeGraph.createPasser();
     N_Switch copy = new N_Switch(x+10, y+10, nodeGraph.getLastNode());
-    copy.value = value;
     return copy;
   }
 
@@ -218,8 +219,8 @@ class N_Switch extends Node
 
   void update() {
     state = child.isFed;
-    outputs[0].isBlocked = state;
-    outputs[1].isBlocked = !state;
+    outputs.get(0).isBlocked = state;
+    outputs.get(1).isBlocked = !state;
     super.update();
   }
 
@@ -249,7 +250,6 @@ class N_WaterMill extends Node
   N_WaterMill copy() {
     nodeGraph.createPasser();
     N_WaterMill copy = new N_WaterMill(x+10, y+10, nodeGraph.getLastNode());
-    copy.value = value;
     return copy;
   }
 

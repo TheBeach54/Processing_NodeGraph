@@ -91,6 +91,7 @@ class Widget
     return (mouseX > this.x && mouseX < (this.x + xSize) && mouseY > this.y && mouseY < this.y + this.ySize);
   }
 }
+
 class Node extends Widget
 {
   // Node Helpers
@@ -109,8 +110,11 @@ class Node extends Widget
   int valueType = ValueType.WATER;
 
   // Node Pins
-  NodePinOutput[] outputs;
-  NodePinInput[] inputs;
+  ArrayList<NodePinOutput> outputs;
+  ArrayList<NodePinInput> inputs;
+
+  boolean outputExtensible = false;
+  boolean inputExtensible = false;
 
   Node()
   {
@@ -136,18 +140,19 @@ class Node extends Widget
   }
 
   void createPin(int inCount, int outCount) {
-    this.outputs = new NodePinOutput[outCount];
-    this.inputs = new NodePinInput[inCount];
-    for (int i = 0; i < outputs.length; i++) {
-      outputs[i] = new NodePinOutput(this, this.xSize-10, 20+ i * 20);
+    this.outputs = new ArrayList<NodePinOutput>();
+    this.inputs = new ArrayList<NodePinInput>();
+    for (int i = 0; i < outCount; i++) {
+      outputs.add(new NodePinOutput(this, this.xSize-10, 20+ i * 20));
     }
-    for (int i = 0; i < inputs.length; i++) {
-      inputs[i] = new NodePinInput(this, 0, 20+ i * 20);
+    for (int i = 0; i < inCount; i++) {
+      inputs.add( new NodePinInput(this, 0, 20+ i * 20));
     }
 
-    ySize = 20 + max(outputs.length, inputs.length) * 20;
+    addNewInputTemplate();
+    addNewOutputTemplate();
+    refreshSize();
   }
-
 
   float getMaxAbsorb(float value)
   {
@@ -328,11 +333,11 @@ class Node extends Widget
     preShow();
     rectMode(CORNER);
     rect(x, y, xSize, ySize );
-    for (int i = 0; i < outputs.length; i++) {
-      outputs[i].show();
+    for (int i = 0; i < outputs.size(); i++) {
+      outputs.get(i).show();
     }
-    for (int i = 0; i < inputs.length; i++) {
-      inputs[i].show();
+    for (int i = 0; i < inputs.size(); i++) {
+      inputs.get(i).show();
     }
     textAlign(CENTER);
     fill(C_LINK_TEXT);
@@ -343,6 +348,59 @@ class Node extends Widget
   {
     parent = n;
   }
+  void addNewInputTemplate()
+  {
+    if (inputExtensible)
+    {
+      inputs.add(new NodePinInputTemplate(this, 0, 20+inputs.size() * 20));
+      refreshSize();
+    }
+  }
+  void addNewOutputTemplate()
+  {
+    if (outputExtensible) {
+      outputs.add(new NodePinOutputTemplate(this, this.xSize-10, 20+outputs.size() * 20));
+      refreshSize();
+    }
+  }
+
+  void refreshSize()
+  {
+    ySize = 20 + max(outputs.size(), inputs.size()) * 20;
+  }
+
+  NodePin replaceTemplate(NodePin template)
+  {
+    if(template.isTemplate)
+    {
+    for (int i = inputs.size()-1; i>= 0; i--)
+    {
+      if (inputs.get(i) == template)
+      {         
+        NodePinInput np = new NodePinInput(template.parent, template.locX, template.locY);
+        inputs.add(i, np);
+        inputs.remove(i+1);
+        addNewInputTemplate();
+        return inputs.get(i);
+      }
+    }
+    for (int i = outputs.size()-1; i>= 0; i--)
+    {
+      if (outputs.get(i) == template)
+      {         
+
+        NodePinOutput np = new NodePinOutput(template.parent, template.locX, template.locY);
+        outputs.add(i, np);
+        outputs.remove(i+1);
+        addNewOutputTemplate();
+        return outputs.get(i);
+      }
+    }
+    return null;
+    }
+    return template;
+  }
+
 
   void destroy() {    
     isDestroyed = true;
