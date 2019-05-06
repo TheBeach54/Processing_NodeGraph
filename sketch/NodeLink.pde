@@ -15,10 +15,11 @@ class NodeLink {
     in.connection++;
     out.connection++;
     
-    update();
+    updateCollisions();
   }
   void chainExecute()
   {
+    
     chainExecute(this);
   }
   void chainExecute(NodeLink start)
@@ -32,15 +33,21 @@ class NodeLink {
   }
 
   void update(){
-    isValid = nodeGraph.validateLink(in.x, in.y, out.x, out.y);
+    lastValue = 0;
   }
-
+  
+  void updateCollisions(){
+    PVector inC = in.getCenter();
+    PVector outC = out.getCenter();
+    isValid = nodeGraph.validateLine(inC.x, inC.y, outC.x, outC.y);
+  }
 
   void execute() {
     
     if (!(in.isBlocked || out.isBlocked) && isValid) {
-      lastValue = in.parent.absorbValue(flowRate);
-      out.parent.injectValue(lastValue);
+      float temp = in.parent.absorbValue(flowRate);
+      lastValue += temp;
+      out.parent.injectValue(temp);
     } else
     {
       lastValue = 0;

@@ -56,7 +56,7 @@ class NodePin {
 
   void updateLink() {
     if (connection > 0)
-      connectedLink.update();
+      connectedLink.updateCollisions();
   }
 
   void drop()
@@ -102,7 +102,7 @@ class NodePin {
     rect(x, y, xSize, ySize);
     if (isDragged) {
       PVector cPos = getCenter();
-      boolean valid = nodeGraph.validateLink(cPos.x, cPos.y, mouseX, mouseY);
+      boolean valid = nodeGraph.validateLine(cPos.x, cPos.y, mouseX, mouseY);
       stroke(valid?C_LINK_DEFAULT:C_LINK_INVALID);
       strokeWeight(2);
       line(cPos.x, cPos.y, mouseX, mouseY);

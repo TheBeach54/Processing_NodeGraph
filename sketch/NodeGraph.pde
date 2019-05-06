@@ -77,7 +77,7 @@ class NodeGraph
   void createSwitch()
   {
     createPasser();
-    listNodes.add(new N_Switch(mouseX, mouseY+40,getLastNode()));
+    listNodes.add(new N_Switch(mouseX, mouseY+40, getLastNode()));
   }
 
   void createNode(int index)
@@ -131,7 +131,7 @@ class NodeGraph
     }
   }
 
-  boolean validateLink(float ax, float ay, float bx, float by)
+  boolean validateLine(float ax, float ay, float bx, float by)
   {
     for (Blocker b : blockers)
     {
@@ -156,7 +156,27 @@ class NodeGraph
       n.update();
 
     for (NodeLink nl : listLinks)
+      nl.update();
+
+    executeLinks();
+  }
+
+  void executeLinks()
+  {
+    for (NodeLink nl : listLinks)
       nl.execute();
+  }
+
+  void executeLinksFromGenerator()
+  {
+    for (Node n : listNodes)
+    {
+      if (n instanceof N_Generator)
+      {
+        if (n.outputs[0].connectedLink != null)
+          n.outputs[0].connectedLink.chainExecute();
+      }
+    }
   }
 
   void show()
