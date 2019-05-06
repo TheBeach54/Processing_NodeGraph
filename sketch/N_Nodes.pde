@@ -259,11 +259,12 @@ class N_WaterMill extends Node
 
   void update() {
     state = child.isFed;
+    value = min(value, 1.0);
     if (state)
       value += flowRate;
 
 
-    value = min(value, 1.0);
+
     super.update();
   }
 

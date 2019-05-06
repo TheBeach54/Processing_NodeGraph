@@ -239,7 +239,7 @@ class NodeGraph
           break;
         }
       }
-      if (nodeMenu.mouseIsOverlapping())
+      if (nodeMenu.mouseIsOverlapping() && nodeMenu.isOpen)
       {
         found = true;
         nodeMenu.pressed();

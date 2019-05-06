@@ -323,7 +323,7 @@ class Node extends Widget
   void show()
   {
     strokeWeight(isSelected?2:1);
-    stroke(C_NODE_STROKE);
+    stroke(isSelected?C_NODE_STROKE_SELECTED:C_NODE_STROKE);
     fill(C_NODE_DEFAULT);
     preShow();
     rectMode(CORNER);

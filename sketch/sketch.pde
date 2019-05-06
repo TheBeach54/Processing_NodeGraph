@@ -1,12 +1,12 @@
-ArrayList<NodeTree> treeRoots;  //<>//
-NodeGraph nodeGraph; //<>//
+ArrayList<NodeTree> treeRoots;  //<>// //<>//
+NodeGraph nodeGraph;
 float flowRate;
 
 void setup()
 {
   size(600, 400);
-  nodeGraph = new NodeGraph(0);
   flowRate = 1;
+  nodeGraph = new NodeGraph(0);
 }
 void mousePressed()
 {
