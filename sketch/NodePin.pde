@@ -60,6 +60,8 @@ class NodePin {
   void updateType()
   {
     valueType = parent.valueType;
+    if(connectedLink != null)
+      connectedLink.assignType(valueType);
   }
 
   void updateLink() {

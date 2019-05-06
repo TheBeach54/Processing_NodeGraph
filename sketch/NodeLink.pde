@@ -2,6 +2,8 @@ class NodeLink {
   NodePin in;
   NodePin out;
 
+  int valueType;
+
   float lastValue;
   boolean isValid;
 
@@ -14,17 +16,14 @@ class NodeLink {
     out.connectedLink = this;
     in.connection++;
     out.connection++;
-    
-    if(in.valueType == -1)
-      in.parent.assignType(out.valueType);
-    if(out.valueType == -1)
-      out.parent.assignType(in.valueType);
-    
+
+    conformType();
+
+    this.valueType = out.parent.valueType;
     updateCollisions();
   }
   void chainExecute()
   {
-    
     chainExecute(this);
   }
   void chainExecute(NodeLink start)
@@ -37,20 +36,43 @@ class NodeLink {
     }
   }
 
-  void update(){
-    
-      
+  void assignType(int type)
+  {
+    valueType = type;
+  }
+
+  boolean conformType()
+  {
+    boolean test = false;
+    if (in.valueType == -1)
+    {
+      in.parent.assignType(out.valueType);
+      if(in.parent.valueType != -1)
+        test = true;
+    }
+    if (out.valueType == -1)
+    {
+      out.parent.assignType(in.valueType);
+      if(out.parent.valueType != -1)
+        test = true;
+    }
+    return test;
+  }
+
+  void update() {
+
+
     lastValue = 0;
   }
-  
-  void updateCollisions(){
+
+  void updateCollisions() {
     PVector inC = in.getCenter();
     PVector outC = out.getCenter();
     isValid = nodeGraph.validateLine(inC.x, inC.y, outC.x, outC.y);
   }
 
   void execute() {
-    
+
     if (!(in.isBlocked || out.isBlocked) && isValid) {
       float temp = in.parent.absorbValue(flowRate);
       lastValue += temp;
@@ -76,9 +98,9 @@ class NodeLink {
     PVector start = in.getCenter();
     PVector end = out.getCenter();
     stroke(lastValue>0?C_LINK_FULL:C_LINK_DEFAULT);
-    if(!isValid)
+    if (!isValid)
       stroke(C_LINK_INVALID);
-      
+
     strokeWeight(2);
     line(start.x, start.y, end.x, end.y);
     textAlign(CENTER);

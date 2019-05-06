@@ -264,6 +264,8 @@ class Node extends Widget
   }
   void update()
   {
+
+
     if (child != null)
     {    
       if (isDragged)
@@ -281,6 +283,7 @@ class Node extends Widget
       if (child.isSelected)
         isSelected = true;
     }
+
     for (NodePin np : inputs)
     {
       np.update();

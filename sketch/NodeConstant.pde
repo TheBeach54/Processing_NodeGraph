@@ -42,5 +42,6 @@ static abstract class ValueType
 {
   static final int UNDEFINED = -1;
   static final int WATER = 0;
-  static final int ELECTRIC = 1;
+  static final int ELECTRIC = 1;  
+  static final int GAS = 1;
 }

@@ -62,7 +62,7 @@ class N_PowerReceiver extends N_Receiver
     valueType = ValueType.ELECTRIC;
     updatePinType();
   }
-    N_PowerReceiver copy()
+  N_PowerReceiver copy()
   {
     N_PowerReceiver copy = new N_PowerReceiver(x+10, y+10);
     copy.value = value;
@@ -260,8 +260,10 @@ class N_WaterMill extends Node
   void update() {
     state = child.isFed;
     if (state)
-      value++;
+      value += flowRate;
 
+
+    value = min(value, 1.0);
     super.update();
   }
 

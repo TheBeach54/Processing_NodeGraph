@@ -165,7 +165,10 @@ class NodeGraph
   // Common Function
   void update()
   {
-    appendLinkQueue();
+    if (appendLinkQueue())
+    {
+      conformAllLinks();
+    }
 
 
     for (Node n : listNodes)
@@ -315,13 +318,28 @@ class NodeGraph
     linkQueue.add(new NodeLink(a, b));
   }
 
-  void appendLinkQueue()
+  void conformAllLinks()
+  {
+    for (NodeLink nl : listLinks) {
+      if (nl.conformType())
+      {        
+        conformAllLinks();
+        break;
+      }
+    }
+  }
+
+  boolean appendLinkQueue()
   {
     for (NodeLink nl : linkQueue) {
       listLinks.add(nl);
     }
     if (linkQueue.size()>0)
+    {
       linkQueue = new ArrayList<NodeLink>();
+      return true;
+    }
+    return false;
   }
 
   void deleteLink(NodeLink nl)

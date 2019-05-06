@@ -1,8 +1,7 @@
-ArrayList<NodeTree> treeRoots; //<>// //<>// //<>// //<>//
-
-
-NodeGraph nodeGraph; //<>// //<>//
+ArrayList<NodeTree> treeRoots;  //<>//
+NodeGraph nodeGraph; //<>//
 float flowRate;
+
 void setup()
 {
   size(600, 400);
