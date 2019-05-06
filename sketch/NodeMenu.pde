@@ -1,29 +1,18 @@
-static abstract class NodeType
-{
-  static final int GENERATOR = 0;
-  static final int RECEIVER = 1;
-  static final int DIVIDER = 2;
-  static final int MERGER = 3;
-  static final int PASSER = 4;
-  static final int SWITCH = 5;
-}
 
-static abstract class ValueType
-{
-  static final int WATER = 0;
-  static final int ELECTRIC = 1;
-}
 
 class NodeMenu extends Widget
 {
   String[] strings = 
     {
     "Generator", 
+    "Power Supply", 
     "Receiver", 
     "Divider", 
     "Merger", 
     "Passer", 
-    "Switch"
+    "Switch", 
+    "Power Receiver",
+    "Water Mill"
   };
   ArrayList<NodeMenuWidget> menuWidgets;
   float widgetHeight = 20;
@@ -33,7 +22,11 @@ class NodeMenu extends Widget
   {
     x = 0;
     y = 0;
-    xSize = 80;
+    xSize = 10;
+    for(String s : strings)
+    {
+      xSize = max(xSize,s.length()*8);
+    }
     ySize = strings.length * widgetHeight;
     menuWidgets = new ArrayList<NodeMenuWidget>();
     for (int i = 0; i< strings.length; i++)

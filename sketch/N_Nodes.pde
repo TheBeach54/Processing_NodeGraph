@@ -1,4 +1,3 @@
-
 class N_Generator extends Node
 {
   float generates = 1.0;
@@ -32,6 +31,42 @@ class N_Generator extends Node
   void preShow() {
     super.preShow();
     fill(isFed?C_NODE_FED:C_NODE_UNFED);
+  }
+}
+class N_PowerSupply extends N_Generator
+{
+  N_PowerSupply(float x, float y)
+  {
+    super(x, y);
+    valueType = ValueType.ELECTRIC;
+    updatePinType();
+  }
+  N_PowerSupply(float x, float y, float generates)
+  {
+    super(x, y, generates);
+    valueType = ValueType.ELECTRIC;
+    updatePinType();
+  }
+}
+class N_PowerReceiver extends N_Receiver
+{
+  N_PowerReceiver(float x, float y)
+  {
+    super(x, y);
+    valueType = ValueType.ELECTRIC;
+    updatePinType();
+  }
+  N_PowerReceiver(float x, float y, float needs)
+  {
+    super(x, y, needs);
+    valueType = ValueType.ELECTRIC;
+    updatePinType();
+  }
+    N_PowerReceiver copy()
+  {
+    N_PowerReceiver copy = new N_PowerReceiver(x+10, y+10);
+    copy.value = value;
+    return copy;
   }
 }
 
@@ -74,12 +109,14 @@ class N_Divider extends Node
   N_Divider(float x, float y, int outCount ) {
     super(x, y);
     this.outCount = outCount;
+    valueType = -1;
     createPin(1, outCount);
   }
 
   N_Divider(float x, float y ) {
     super(x, y);
     this.outCount = 2;
+    valueType = -1;
     createPin(1, 2);
   }
 
@@ -98,6 +135,7 @@ class N_Merger extends Node
   {
     super(x, y);
     this.inCount = inCount;
+    valueType = -1;
     createPin(inCount, 1);
   }
 
@@ -118,6 +156,7 @@ class N_Passer extends Node
 {
   N_Passer (float x, float y) {
     super(x, y);
+    valueType = -1;
     createPin(1, 1);
   }
   N_Passer copy()
@@ -159,6 +198,7 @@ class N_Switch extends Node
 
   N_Switch(float x, float y, Node child) {
     super(x, y);
+    valueType = -1;
     createPin(1, 2);
 
     this.child = child;
@@ -173,31 +213,55 @@ class N_Switch extends Node
   }
 
   void destroy() {
-
     super.destroy();
   }
 
-
   void update() {
-
-    if (isDragged)
-    {
-      child.x = x;
-      child.y = y - 40;
-    } else
-    {
-      x = child.x;
-      y = child.y+40;
-    }
-    if (isSelected)
-      child.isSelected = true;
-
-    if (child.isSelected)
-      isSelected = true;
-
     state = child.isFed;
     outputs[0].isBlocked = state;
     outputs[1].isBlocked = !state;
+    super.update();
+  }
+
+  void preShow()
+  {
+    super.preShow();
+    fill(state?C_NODE_FED:C_NODE_UNFED);
+  }
+}
+
+class N_WaterMill extends Node
+{
+  boolean state;
+
+
+  N_WaterMill(float x, float y, Node child) {
+    super(x, y);
+    valueType = ValueType.ELECTRIC;
+    createPin(0, 1);
+
+    this.child = child;
+    child.assignParent(this);
+
+    child.assignType(ValueType.WATER);
+  }
+
+  N_WaterMill copy() {
+    nodeGraph.createPasser();
+    N_WaterMill copy = new N_WaterMill(x+10, y+10, nodeGraph.getLastNode());
+    copy.value = value;
+    return copy;
+  }
+
+  void destroy() {
+    super.destroy();
+  }
+
+  void update() {
+    state = child.isFed;
+    if (state)
+      value++;
+
     super.update();
   }
 

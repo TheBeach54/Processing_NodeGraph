@@ -48,20 +48,30 @@ class NodeGraph
   {
     listNodes.add(new N_Generator(mouseX, mouseY));
   }
-
+  void createPower()
+  {
+    listNodes.add(new N_PowerSupply(mouseX, mouseY));
+  }
   void createReceiver()
   {
     listNodes.add(new N_Receiver(mouseX, mouseY));
   }
-
   void createDivider()
   {
     listNodes.add(new N_Divider(mouseX, mouseY, floor(random(2, 5))));
   }
-
+  void createPowerReceiver()
+  {    
+    listNodes.add(new N_PowerReceiver(mouseX, mouseY));
+  }
   void createMerger()
   {
     listNodes.add(new N_Merger(mouseX, mouseY, floor(random(2, 5))));
+  }
+  void createWaterMill()
+  {
+    createPasser();
+    listNodes.add(new N_WaterMill(mouseX, mouseY, getLastNode()));
   }
 
   N_Passer createPasser()
@@ -87,6 +97,9 @@ class NodeGraph
     case NodeType.GENERATOR:
       createGenerator();
       break;
+    case NodeType.POWERSUPPLY:
+      createPower();
+      break;
     case NodeType.RECEIVER: 
       createReceiver();
       break;
@@ -101,6 +114,12 @@ class NodeGraph
       break;
     case NodeType.SWITCH: 
       createSwitch();
+      break;
+    case NodeType.POWERRECEIVER:
+      createPowerReceiver();
+      break;
+    case NodeType.WATERMILL:
+      createWaterMill();
       break;
     }
   }
@@ -273,7 +292,10 @@ class NodeGraph
       && a.isInput != b.isInput 
       && a.parent != b.parent
       && b.connection < 1
-      && a.connection < 1);
+      && a.connection < 1
+      &&(( a.valueType == b.valueType)
+      ||(a.valueType == -1)
+      ||(b.valueType == -1)));
   }
 
   void addLinkStart(NodePin a) {

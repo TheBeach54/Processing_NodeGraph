@@ -106,6 +106,7 @@ class Node extends Widget
   boolean isDestroyed = false;
   float oldValue;
   boolean isFed = false;
+  int valueType = ValueType.WATER;
 
   // Node Pins
   NodePinOutput[] outputs;
@@ -249,13 +250,46 @@ class Node extends Widget
     for (NodePin pin : inputs)
       pin.updateLink();
   }
+  void updatePinType()
+  {
+    for (NodePin pin : outputs)
+      pin.updateType();
+    for (NodePin pin : inputs)
+      pin.updateType();
+  }
+  void assignType(int type)
+  {
+    valueType = type;
+    updatePinType();
+  }
   void update()
   {
+    if (child != null)
+    {    
+      if (isDragged)
+      {
+        child.x = x;
+        child.y = y - 40;
+      } else
+      {
+        x = child.x;
+        y = child.y+40;
+      }
+      if (isSelected)
+        child.isSelected = true;
+
+      if (child.isSelected)
+        isSelected = true;
+    }
     for (NodePin np : inputs)
+    {
       np.update();
+    }
 
     for (NodePin np : outputs)
+    {   
       np.update();
+    }
   }
 
   ArrayList<NodeLink> getLinks()
@@ -276,10 +310,10 @@ class Node extends Widget
 
   void preShow()
   {
-    for(NodePin np : outputs)
+    for (NodePin np : outputs)
       np.preShow();
-      
-    for(NodePin np : inputs)
+
+    for (NodePin np : inputs)
       np.preShow();
   }
 

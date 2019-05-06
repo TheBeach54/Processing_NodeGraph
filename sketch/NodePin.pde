@@ -16,6 +16,8 @@ class NodePin {
   int connection;
   int executed;
 
+  int valueType = ValueType.WATER;
+
 
   Node parent;
   NodeLink connectedLink;
@@ -25,6 +27,7 @@ class NodePin {
     this.locX = locX;
     this.locY = locY;
     this.parent = parent;
+    this.valueType = parent.valueType;
   }
 
   boolean mouseIsOverlapping()
@@ -52,6 +55,11 @@ class NodePin {
   {
     x = parent.x + locX;
     y = parent.y + locY;
+  }
+  
+  void updateType()
+  {
+    valueType = parent.valueType;
   }
 
   void updateLink() {
@@ -94,10 +102,16 @@ class NodePin {
 
     strokeWeight(1);
     stroke(C_PIN_STROKE);
-    fill(executed>0?C_PIN_WATER:C_PIN_DEFAULT);
+    //fill(executed>0?C_PIN_WATER:C_PIN_DEFAULT);
+    if (valueType == ValueType.WATER)
+      fill(C_PIN_WATER);
+    if (valueType == ValueType.ELECTRIC)
+      fill(C_PIN_ELECTRIC);
+          if (valueType == ValueType.ELECTRIC)
+      fill(C_PIN_ELECTRIC);
+      
     if (isDragged)
       fill(C_PIN_CLICKED);
-
 
     rect(x, y, xSize, ySize);
     if (isDragged) {

@@ -15,6 +15,11 @@ class NodeLink {
     in.connection++;
     out.connection++;
     
+    if(in.valueType == -1)
+      in.parent.assignType(out.valueType);
+    if(out.valueType == -1)
+      out.parent.assignType(in.valueType);
+    
     updateCollisions();
   }
   void chainExecute()
@@ -33,6 +38,8 @@ class NodeLink {
   }
 
   void update(){
+    
+      
     lastValue = 0;
   }
   
