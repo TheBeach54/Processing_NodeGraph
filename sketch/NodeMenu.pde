@@ -11,7 +11,7 @@ class NodeMenu extends Widget
     "Merger", 
     "Passer", 
     "Switch", 
-    "Power Receiver",
+    "Power Receiver", 
     "Water Mill"
   };
   ArrayList<NodeMenuWidget> menuWidgets;
@@ -23,9 +23,9 @@ class NodeMenu extends Widget
     x = 0;
     y = 0;
     xSize = 10;
-    for(String s : strings)
+    for (String s : strings)
     {
-      xSize = max(xSize,s.length()*8);
+      xSize = max(xSize, s.length()*8);
     }
     ySize = strings.length * widgetHeight;
     menuWidgets = new ArrayList<NodeMenuWidget>();

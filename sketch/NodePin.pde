@@ -47,6 +47,10 @@ class NodePin {
   {
     return new PVector(parent.x + locX + xSize/2, parent.y+locY+ySize/2);
   }
+  void executeLinks() {
+    if (connectedLink != null)
+      connectedLink.execute();
+  }
 
   void update() {
     executed = 0;
@@ -153,7 +157,6 @@ class NodePinInputTemplate extends NodePinInput {
     super(parent, locX, locY);
     isTemplate = true;
   }
-
 }
 class NodePinOutputTemplate extends NodePinOutput {
   NodePinOutputTemplate(Node parent, float locX, float locY)
@@ -161,5 +164,4 @@ class NodePinOutputTemplate extends NodePinOutput {
     super(parent, locX, locY);
     isTemplate = true;
   }
-
 }

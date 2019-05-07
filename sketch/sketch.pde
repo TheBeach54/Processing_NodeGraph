@@ -4,17 +4,9 @@ float flowRate;
 
 void setup()
 {
-  size(600, 400);
+  size(800, 600);
   flowRate = 1;
-  nodeGraph = new NodeGraph(0);
-}
-void mousePressed()
-{
-  nodeGraph.pressed();
-}
-void mouseReleased()
-{
-  nodeGraph.released();
+  nodeGraph = new NodeGraph();
 }
 
 void keyPressed()

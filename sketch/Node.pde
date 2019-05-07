@@ -371,32 +371,32 @@ class Node extends Widget
 
   NodePin replaceTemplate(NodePin template)
   {
-    if(template.isTemplate)
+    if (template.isTemplate)
     {
-    for (int i = inputs.size()-1; i>= 0; i--)
-    {
-      if (inputs.get(i) == template)
-      {         
-        NodePinInput np = new NodePinInput(template.parent, template.locX, template.locY);
-        inputs.add(i, np);
-        inputs.remove(i+1);
-        addNewInputTemplate();
-        return inputs.get(i);
+      for (int i = inputs.size()-1; i>= 0; i--)
+      {
+        if (inputs.get(i) == template)
+        {         
+          NodePinInput np = new NodePinInput(template.parent, template.locX, template.locY);
+          inputs.add(i, np);
+          inputs.remove(i+1);
+          addNewInputTemplate();
+          return inputs.get(i);
+        }
       }
-    }
-    for (int i = outputs.size()-1; i>= 0; i--)
-    {
-      if (outputs.get(i) == template)
-      {         
+      for (int i = outputs.size()-1; i>= 0; i--)
+      {
+        if (outputs.get(i) == template)
+        {         
 
-        NodePinOutput np = new NodePinOutput(template.parent, template.locX, template.locY);
-        outputs.add(i, np);
-        outputs.remove(i+1);
-        addNewOutputTemplate();
-        return outputs.get(i);
+          NodePinOutput np = new NodePinOutput(template.parent, template.locX, template.locY);
+          outputs.add(i, np);
+          outputs.remove(i+1);
+          addNewOutputTemplate();
+          return outputs.get(i);
+        }
       }
-    }
-    return null;
+      return null;
     }
     return template;
   }

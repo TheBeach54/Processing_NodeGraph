@@ -47,13 +47,13 @@ class NodeLink {
     if (in.valueType == -1)
     {
       in.parent.assignType(out.valueType);
-      if(in.parent.valueType != -1)
+      if (in.parent.valueType != -1)
         test = true;
     }
     if (out.valueType == -1)
     {
       out.parent.assignType(in.valueType);
-      if(out.parent.valueType != -1)
+      if (out.parent.valueType != -1)
         test = true;
     }
     return test;
@@ -68,7 +68,7 @@ class NodeLink {
   void updateCollisions() {
     PVector inC = in.getCenter();
     PVector outC = out.getCenter();
-    isValid = nodeGraph.validateLine(inC.x, inC.y, outC.x, outC.y);
+    isValid = nodeGraph.validateLine(inC.x, inC.y, outC.x, outC.y,valueType);
   }
 
   void execute() {
@@ -97,7 +97,13 @@ class NodeLink {
   void show() {
     PVector start = in.getCenter();
     PVector end = out.getCenter();
-    stroke(lastValue>0?C_LINK_FULL:C_LINK_DEFAULT);
+    if (valueType == ValueType.WATER)
+      stroke(lastValue>0?C_LINK_WATER:C_LINK_DEFAULT); 
+    else if (valueType == ValueType.ELECTRIC)
+      stroke(lastValue>0?C_LINK_ELECTRIC:C_LINK_DEFAULT); 
+    else if (valueType == ValueType.UNDEFINED)
+      stroke(C_LINK_DEFAULT);
+      
     if (!isValid)
       stroke(C_LINK_INVALID);
 

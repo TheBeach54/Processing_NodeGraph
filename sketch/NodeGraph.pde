@@ -5,34 +5,36 @@ class NodeGraph
   ArrayList<NodeLink> listLinks;
   ArrayList<NodeLink> linkQueue;
   ArrayList<Blocker> blockers;
+  TypeFilter filterBlockWater;
+  
+  
   NodeMenu nodeMenu;
 
   int maxConnection = 1;
 
   boolean isDragged = false;
   boolean isConnectingPin = false;
+  boolean isPressing = false;
 
   float dragStartX = 0.0;
   float dragStartY = 0.0;
 
   NodePin pinTemp;
 
-  NodeGraph(int nCount)
+  NodeGraph()
   {
     listNodes = new ArrayList<Node>();
-    for (int i = 0; i< nCount; i++)
-    {
-      listNodes.add(new Node(random(width), random(height)));
-    }
 
     listNodes.add(new N_Generator(50.0, 50.0));
     for (int i = 0; i < 8; i++) {
       listNodes.add(new N_Receiver(width - 100.0, height - 50 - i*50));
     }
+    
+    filterBlockWater = new TypeFilter(false,ValueType.WATER);
 
     blockers = new ArrayList<Blocker>();
 
-    blockers.add(new Blocker(width/2, 0, 40, height/2-20));
+    blockers.add(new Blocker(width/2, 0, 40, height/2-20,filterBlockWater));
     blockers.add(new Blocker(width/2, height/2+20, 40, height/2-20));
 
     nodeMenu = new NodeMenu();
@@ -150,6 +152,18 @@ class NodeGraph
     }
   }
 
+  boolean validateLine(float ax, float ay, float bx, float by, int type)
+  {
+    for (Blocker b : blockers)
+    {
+      if (b.intersectLine(ax, ay, bx, by) && b.isBlockingType(type))
+      {
+        return false;
+      }
+    }
+    return true;
+  }
+
   boolean validateLine(float ax, float ay, float bx, float by)
   {
     for (Blocker b : blockers)
@@ -165,11 +179,17 @@ class NodeGraph
   // Common Function
   void update()
   {
-    if (appendLinkQueue())
-    {
-      conformAllLinks();
+    if (mousePressed && !isPressing) {
+      pressed();      
+      isPressing = true;
+    }
+    if (!mousePressed && isPressing) {
+      released();
+      isPressing = false;
     }
 
+    if (appendLinkQueue())
+      conformAllLinks();
 
     for (Node n : listNodes)
       n.preUpdate();
@@ -185,21 +205,30 @@ class NodeGraph
 
   void executeLinks()
   {
-    for (NodeLink nl : listLinks)
-      nl.execute();
-  }
-
-  void executeLinksFromGenerator()
-  {
-    for (Node n : listNodes)
-    {
-      if (n instanceof N_Generator)
-      {
-        if (n.outputs.get(0).connectedLink != null)
-          n.outputs.get(0).connectedLink.chainExecute();
+    //Backward loop over every node and execute the outputs
+    for (int i = listNodes.size()-1; i>=0; i--) {
+      for (NodePin np : listNodes.get(i).outputs) {
+        np.executeLinks();
       }
     }
+    //Simple Backward loop over links
+    //for (int i = listLinks.size()-1; i>=0; i--)
+    //  listLinks.get(i).execute();    
+
+    // Simple loop over links
+    //for (NodeLink nl : listLinks)
+    //  nl.execute();
+
+    // Execture all links from the generators, 
+    // Links will be executed n*N_Gen_affecting_it
+    //for (Node n : listNodes) {
+    //  if (n instanceof N_Generator) {
+    //    if (n.outputs.get(0).connectedLink != null)
+    //      n.outputs.get(0).connectedLink.chainExecute();
+    //  }
+    //}
   }
+
 
   void show()
   {
@@ -312,7 +341,7 @@ class NodeGraph
     if (connectionIsValid(pinTemp, b))
       addLink(pinTemp, b);
   }
-  
+
 
   void addLink(NodePin a, NodePin b)
   {       
