@@ -68,7 +68,7 @@ class NodeLink {
   void updateCollisions() {
     PVector inC = in.getCenter();
     PVector outC = out.getCenter();
-    isValid = nodeGraph.validateLine(inC.x, inC.y, outC.x, outC.y,valueType);
+    isValid = nodeGraph.validateLine(inC.x, inC.y, outC.x, outC.y, valueType);
   }
 
   void execute() {
@@ -103,7 +103,7 @@ class NodeLink {
       stroke(lastValue>0?C_LINK_ELECTRIC:C_LINK_DEFAULT); 
     else if (valueType == ValueType.UNDEFINED)
       stroke(C_LINK_DEFAULT);
-      
+
     if (!isValid)
       stroke(C_LINK_INVALID);
 

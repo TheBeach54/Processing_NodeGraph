@@ -110,25 +110,29 @@ class NodePin {
     strokeWeight(1);
     stroke(C_PIN_STROKE);
     //fill(executed>0?C_PIN_WATER:C_PIN_DEFAULT);
-
-    if (valueType == ValueType.WATER)
+    switch(valueType)
+    {
+    case ValueType.WATER :
       fill(C_PIN_WATER);
-    if (valueType == ValueType.ELECTRIC)
+      break;
+    case ValueType.ELECTRIC : 
       fill(C_PIN_ELECTRIC);
-    if (valueType == ValueType.UNDEFINED)
+      break;
+    case ValueType.UNDEFINED :
       fill(C_PIN_DEFAULT);
+      break;
+    }
+
     if (this instanceof NodePinInputTemplate || this instanceof NodePinOutputTemplate)
       fill(C_PIN_TEMPLATE);
 
     if (isDragged)
       fill(C_PIN_CLICKED);
 
-
-
     rect(x, y, xSize, ySize);
     if (isDragged) {
       PVector cPos = getCenter();
-      boolean valid = nodeGraph.validateLine(cPos.x, cPos.y, mouseX, mouseY);
+      boolean valid = nodeGraph.validateLine(cPos.x, cPos.y, mouseX, mouseY, valueType);
       stroke(valid?C_LINK_DEFAULT:C_LINK_INVALID);
       strokeWeight(2);
       line(cPos.x, cPos.y, mouseX, mouseY);

@@ -4,6 +4,8 @@ class Widget
   float xSize, ySize;
 
   boolean isDragged;
+  boolean isStatic = false;
+  boolean isPermanent = false;
 
   Widget()
   {
@@ -236,7 +238,7 @@ class Node extends Widget
   }
   void preUpdate()
   {    
-    if (isDragged)
+    if (isDragged && !isStatic)
     {
       refreshLinks();
       if (child != null)

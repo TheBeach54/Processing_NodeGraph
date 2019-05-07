@@ -20,7 +20,6 @@ static abstract class ValueType
   static final int GAS = 2;
   //
   static final int COUNT = 3;
-  
 }
 
 color C_NODE_DEFAULT = color(150);
@@ -28,7 +27,10 @@ color C_NODE_FED = color(153, 180, 53);
 color C_NODE_UNFED = color(211, 88, 53);
 color C_NODE_STROKE = color(100);
 color C_NODE_STROKE_SELECTED = color(250);
-color C_BLOCKER_FILL = color(200, 39, 31);
+
+color C_BLOCKER_WATER = color(112, 143, 227);
+color C_BLOCKER_ELECTRIC = color(255, 236, 85);
+color C_BLOCKER_ALL = color(12);
 
 color C_PIN_WATER = color(112, 143, 227);
 color C_PIN_ELECTRIC = color(255, 236, 85);

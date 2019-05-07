@@ -32,7 +32,7 @@ class N_Generator extends Node
     fill(isFed?C_NODE_FED:C_NODE_UNFED);
   }
 }
-class N_PowerSupply extends N_Generator
+class N_PowerSupply extends N_Generator 
 {
   N_PowerSupply(float x, float y)
   {
@@ -166,10 +166,8 @@ class N_Passer extends Node
     { 
       N_Passer copy = new N_Passer(x+10, y+10); 
       return copy;
-    } else 
-    { 
-      return null;
     }
+    return null;
   }
 
   void update() {
@@ -197,7 +195,6 @@ class N_Switch extends Node
 {
   boolean state;
 
-
   N_Switch(float x, float y, Node child) {
     super(x, y);
     valueType = -1;
@@ -208,7 +205,7 @@ class N_Switch extends Node
   }
 
   N_Switch copy() {
-    nodeGraph.createPasser();
+    nodeGraph.createPasser(mouseX, mouseY);
     N_Switch copy = new N_Switch(x+10, y+10, nodeGraph.getLastNode());
     return copy;
   }
@@ -235,7 +232,6 @@ class N_WaterMill extends Node
 {
   boolean state;
 
-
   N_WaterMill(float x, float y, Node child) {
     super(x, y);
     valueType = ValueType.ELECTRIC;
@@ -248,7 +244,7 @@ class N_WaterMill extends Node
   }
 
   N_WaterMill copy() {
-    nodeGraph.createPasser();
+    nodeGraph.createPasser(mouseX, mouseY);
     N_WaterMill copy = new N_WaterMill(x+10, y+10, nodeGraph.getLastNode());
     return copy;
   }
@@ -262,8 +258,6 @@ class N_WaterMill extends Node
     value = min(value, 1.0);
     if (state)
       value += flowRate;
-
-
 
     super.update();
   }

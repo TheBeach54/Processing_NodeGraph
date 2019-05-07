@@ -5,9 +5,10 @@ class NodeGraph
   ArrayList<NodeLink> listLinks;
   ArrayList<NodeLink> linkQueue;
   ArrayList<Blocker> blockers;
+
   TypeFilter filterBlockWater;
-  
-  
+  TypeFilter filterBlockElectric;
+
   NodeMenu nodeMenu;
 
   int maxConnection = 1;
@@ -27,15 +28,21 @@ class NodeGraph
 
     listNodes.add(new N_Generator(50.0, 50.0));
     for (int i = 0; i < 8; i++) {
-      listNodes.add(new N_Receiver(width - 100.0, height - 50 - i*50));
+      N_Receiver nr = new N_Receiver(width - 100.0, height - 50 - i*50);
+      nr.isStatic = true;
+      nr.isPermanent = true;
+      listNodes.add(nr);
     }
-    
-    filterBlockWater = new TypeFilter(false,ValueType.WATER);
+
+    filterBlockWater = new TypeFilter(false, ValueType.WATER);
+    filterBlockElectric = new TypeFilter(false, ValueType.ELECTRIC);
 
     blockers = new ArrayList<Blocker>();
 
-    blockers.add(new Blocker(width/2, 0, 40, height/2-20,filterBlockWater));
-    blockers.add(new Blocker(width/2, height/2+20, 40, height/2-20));
+    blockers.add(new Blocker(width/2, 0, 50, height/3, filterBlockElectric));
+    blockers.add(new Blocker(width/2, height/3, 50, height/3));
+    blockers.add(new Blocker(width/2, 2*height/3, 50, height/3, filterBlockWater));
+
 
     nodeMenu = new NodeMenu();
     linkQueue = new ArrayList<NodeLink>();
@@ -46,82 +53,83 @@ class NodeGraph
 
   //---------------
   // Node Creation
-  void createGenerator()
+  void createGenerator(float x, float y)
   {
-    listNodes.add(new N_Generator(mouseX, mouseY));
+    listNodes.add(new N_Generator(x, y));
   }
-  void createPower()
+  void createPower(float x, float y)
   {
-    listNodes.add(new N_PowerSupply(mouseX, mouseY));
+    listNodes.add(new N_PowerSupply(x, y));
   }
-  void createReceiver()
+  void createReceiver(float x, float y)
   {
-    listNodes.add(new N_Receiver(mouseX, mouseY));
+    listNodes.add(new N_Receiver(x, y));
   }
-  void createDivider()
+  void createDivider(float x, float y)
   {
-    listNodes.add(new N_Divider(mouseX, mouseY));
+    listNodes.add(new N_Divider(x, y));
   }
-  void createPowerReceiver()
+  void createPowerReceiver(float x, float y)
   {    
-    listNodes.add(new N_PowerReceiver(mouseX, mouseY));
+    listNodes.add(new N_PowerReceiver(x, y));
   }
-  void createMerger()
+  void createMerger(float x, float y)
   {
-    listNodes.add(new N_Merger(mouseX, mouseY));
+    listNodes.add(new N_Merger(x, y));
   }
-  void createWaterMill()
+  void createWaterMill(float x, float y)
   {
-    createPasser();
-    listNodes.add(new N_WaterMill(mouseX, mouseY, getLastNode()));
+    createPasser(x, y);
+    listNodes.add(new N_WaterMill(x, y, getLastNode()));
   }
 
-  N_Passer createPasser()
+  N_Passer createPasser(float x, float y)
   {
-    N_Passer n = new N_Passer(mouseX, mouseY);
+    N_Passer n = new N_Passer(x, y);
     listNodes.add(n);
     return n;
+  }
+
+  void createSwitch(float x, float y)
+  {
+    createPasser(x, y);
+    listNodes.add(new N_Switch(x, y+40, getLastNode()));
   }
   Node getLastNode()
   {
     return listNodes.get(listNodes.size()-1);
   }
-  void createSwitch()
-  {
-    createPasser();
-    listNodes.add(new N_Switch(mouseX, mouseY+40, getLastNode()));
-  }
 
-  void createNode(int index)
+  void createNode(float x, float y, int index)
   {
     switch(index)
     {
     case NodeType.GENERATOR:
-      createGenerator();
+      createGenerator(x, y);
       break;
     case NodeType.POWERSUPPLY:
-      createPower();
+      createPower(x, y);
       break;
     case NodeType.RECEIVER: 
-      createReceiver();
+      createReceiver(x, y);
       break;
     case NodeType.DIVIDER: 
-      createDivider();
+      createDivider(x, y);
       break;
     case NodeType.MERGER: 
-      createMerger();
+      createMerger(x, y);
       break;
     case NodeType.PASSER: 
-      createPasser();
+      createPasser(x, y);
       break;
     case NodeType.SWITCH: 
-      createSwitch();
+      createSwitch(x, y);
       break;
     case NodeType.POWERRECEIVER:
-      createPowerReceiver();
+      createPowerReceiver(x, y);
       break;
     case NodeType.WATERMILL:
-      createWaterMill();
+      createWaterMill(x, y);
       break;
     }
   }
@@ -136,16 +144,16 @@ class NodeGraph
       copySelected();
       break;
     case 'g' :
-      createGenerator();
+      createGenerator(mouseX, mouseY);
       break;
     case 'r' :
-      createReceiver();
+      createReceiver(mouseX, mouseY);
       break;
     case 'd' :
-      createDivider();
+      createDivider(mouseX, mouseY);
       break;
     case 'm' : 
-      createMerger();
+      createMerger(mouseX, mouseY);
       break;
     default :
       break;
@@ -403,7 +411,7 @@ class NodeGraph
 
   void destroyNode(Node n)
   {
-    if (n != null) {
+    if (n != null && !n.isPermanent) {
       n.destroy();
       destroyLinks(n.getLinks());
       listNodes.remove(n);

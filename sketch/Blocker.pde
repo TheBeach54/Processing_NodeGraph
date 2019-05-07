@@ -1,15 +1,17 @@
 class TypeFilter
 {
+  boolean blockAllTypes = false;
   boolean[] blockTypes;
   TypeFilter()
   {
+    blockAllTypes = true;
     blockTypes = new boolean[ValueType.COUNT];
 
     for (int i = 0; i < blockTypes.length; i ++) {
       blockTypes[i] = true;
     }
   }
-  
+
   TypeFilter(boolean def, int typeA)
   {
     blockTypes = new boolean[ValueType.COUNT];
@@ -21,6 +23,9 @@ class TypeFilter
 
   boolean isBlocking(int type)
   {
+    if (type<0)
+      return false;
+
     return blockTypes[type];
   }
 }
@@ -60,7 +65,16 @@ class Blocker extends Widget
 
   void show()
   {
-    color col = C_BLOCKER_FILL + C_BLOCKER_FILL;
+    color col = color(0);
+    if (filter.blockAllTypes) {
+      col = C_BLOCKER_ALL;
+    } else {
+      if (filter.isBlocking(ValueType.ELECTRIC))
+        col += C_BLOCKER_ELECTRIC;
+      if (filter.isBlocking(ValueType.WATER))
+        col += C_BLOCKER_WATER;
+    }
+
     noStroke();
     fill(col);
     rect(x, y, xSize, ySize);

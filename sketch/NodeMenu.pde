@@ -37,9 +37,11 @@ class NodeMenu extends Widget
 
   void open(float x, float y)
   {
-    this.x = x;
-    this.y = y;
+    this.x = min(x, width-xSize);
+    this.y = min(y, height-ySize);
+
     isOpen = true;
+
     for (NodeMenuWidget w : menuWidgets)
     {
       w.update();
@@ -114,7 +116,7 @@ class NodeMenuWidget extends Widget
 
   void clicked()
   {
-    nodeGraph.createNode(index);
+    nodeGraph.createNode(parent.x + parent.xSize/3, parent.y + parent.ySize/3, index);
     parent.close();
   }
 
