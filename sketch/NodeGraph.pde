@@ -262,7 +262,6 @@ class NodeGraph
   {
     if (mouseButton == LEFT)
     {
-
       boolean found = false;
       for (int i = listNodes.size()-1; i>=0; i--)
       {
@@ -276,6 +275,8 @@ class NodeGraph
           break;
         }
       }
+
+
       if (nodeMenu.mouseIsOverlapping() && nodeMenu.isOpen)
       {
         found = true;

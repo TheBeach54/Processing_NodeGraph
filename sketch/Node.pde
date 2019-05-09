@@ -180,8 +180,7 @@ class Node extends Widget
 
   boolean pressed()
   {
-    if ( mouseIsOverlapping() )
-    {
+
       mOffX = mouseX - x;
       mOffY = mouseY - y;
       for (NodePin pin : outputs) {
@@ -201,8 +200,8 @@ class Node extends Widget
       isSelected = true;
       isDragged = true;
       return true;
-    }
-    return false;
+    
+
   }
 
   void released()
